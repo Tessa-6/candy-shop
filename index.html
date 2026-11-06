@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>糖研所 GUMMY LAB · 品牌软糖小店</title>
+<meta name="description" content="糖研所是一家只卖品牌软糖的小店，10 个 SKU，支持在线下单、模拟发货与物流状态跟踪。">
+<style>
+:root {
+  --bg: #FBF7F1;
+  --surface: #FFFFFF;
+  --surface-2: #F4EBE0;
+  --fg: #221318;
+  --muted: #6E5A60;
+  --border: #E4D6C8;
+  --accent: #C4223B;
+  --ok: #1F6B4A;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Georgia, "Songti SC", "STSong", serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-num: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --r-s: 4px;
+  --r-m: 10px;
+  --r-l: 18px;
+  --shadow: 0 1px 2px rgba(34,19,24,.05), 0 12px 32px -18px rgba(34,19,24,.35);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.18; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.wrap { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
+.eyebrow { font-family: var(--font-num); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+
+.nav { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.nav-in { display: flex; align-items: center; gap: 28px; height: 64px; }
+.brand { display: flex; align-items: baseline; gap: 9px; font-family: var(--font-display); font-size: 19px; letter-spacing: .02em; }
+.brand b { font-weight: 600; }
+.brand span { font-family: var(--font-num); font-size: 10px; letter-spacing: .18em; color: var(--muted); }
+.nav-links { display: flex; gap: 22px; margin-left: auto; font-size: 14px; }
+.nav-links a { color: var(--muted); padding: 4px 0; border-bottom: 1px solid transparent; transition: color .18s, border-color .18s; }
+.nav-links a:hover { color: var(--fg); border-bottom-color: var(--accent); }
+.cart-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--fg); color: var(--bg); border: 0; border-radius: 999px; padding: 9px 16px; font-family: var(--font-body); font-size: 13px; cursor: pointer; white-space: nowrap; }
+.cart-btn:hover { background: var(--accent); }
+.cart-btn svg { width: 15px; height: 15px; }
+
+.hero { padding: 56px 0 44px; }
+.hero-grid { display: grid; grid-template-columns: 1.02fr .98fr; gap: 56px; align-items: center; }
+.hero h1 { font-size: clamp(34px, 4.4vw, 54px); margin: 16px 0 0; }
+.hero .lead { margin-top: 18px; max-width: 46ch; color: var(--muted); font-size: 16.5px; }
+.hero-cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; padding: 12px 22px; font-size: 14px; font-family: var(--font-body); border: 1px solid transparent; cursor: pointer; transition: transform .15s, background .18s, color .18s, border-color .18s; white-space: nowrap; }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: var(--surface); }
+.btn-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 84%, var(--fg)); }
+.btn-ghost { background: transparent; color: var(--fg); border-color: var(--border); }
+.btn-ghost:hover { border-color: var(--fg); }
+.btn-sm { padding: 7px 14px; font-size: 12.5px; }
+.btn-ship { background: var(--fg); color: var(--bg); padding: 7px 14px; font-size: 12.5px; }
+.btn-ship:hover { background: var(--accent); }
+.hero-media { position: relative; border-radius: var(--r-l); overflow: hidden; box-shadow: var(--shadow); aspect-ratio: 4/3; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-tag { position: absolute; left: 16px; bottom: 16px; right: 16px; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(8px); border-radius: var(--r-m); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.hero-tag .ht-k { font-size: 11px; color: var(--muted); letter-spacing: .1em; font-family: var(--font-num); text-transform: uppercase; }
+.hero-tag .ht-v { font-family: var(--font-num); font-size: 17px; font-weight: 600; }
+
+.strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); }
+.strip-in { display: grid; grid-template-columns: repeat(4, 1fr); }
+.stat { padding: 22px 24px; border-left: 1px solid var(--border); }
+.stat:first-child { border-left: 0; padding-left: 0; }
+.stat-k { font-size: 12px; color: var(--muted); letter-spacing: .06em; }
+.stat-v { font-family: var(--font-num); font-size: 20px; font-weight: 600; margin-top: 4px; letter-spacing: -.02em; }
+
+section[data-section] { padding: 72px 0; }
+.sec-head { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 34px; flex-wrap: wrap; }
+.sec-head h2 { font-size: clamp(24px, 2.6vw, 32px); margin-top: 8px; }
+.sec-head p { color: var(--muted); max-width: 56ch; font-size: 14.5px; margin-top: 10px; }
+.spectrum { height: 10px; width: 100%; max-width: 380px; border-radius: 999px; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 40%, var(--surface)), var(--surface-2)); display: flex; align-items: center; justify-content: space-between; padding: 0 2px; }
+.spectrum i { width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--fg) 30%, transparent); }
+.spectrum-lbl { display: flex; justify-content: space-between; font-family: var(--font-num); font-size: 10px; color: var(--muted); margin-top: 6px; max-width: 380px; letter-spacing: .08em; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-m); padding: 16px 16px 14px; display: flex; flex-direction: column; transition: box-shadow .2s, transform .2s, border-color .2s; }
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: color-mix(in srgb, var(--fg) 22%, var(--border)); }
+.card-top { display: flex; justify-content: space-between; font-family: var(--font-num); font-size: 10.5px; color: var(--muted); letter-spacing: .1em; }
+.card-cat { border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; letter-spacing: .06em; }
+.swatch { height: 6px; border-radius: 3px; margin: 12px 0 14px; }
+.card-brand { font-size: 17px; letter-spacing: .01em; }
+.card-name { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
+.card-spec { font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+.meters { margin: 14px 0 10px; display: grid; gap: 6px; }
+.meter { display: grid; grid-template-columns: 30px 1fr 24px; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
+.meter-t { height: 4px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.meter-t i { display: block; height: 100%; border-radius: 999px; }
+.meter-v { font-family: var(--font-num); font-size: 11px; text-align: right; color: var(--fg); }
+.card-flavor { font-size: 11.5px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 9px; margin-top: auto; }
+.card-buy { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+.price { display: flex; flex-direction: column; }
+.price .num { font-size: 19px; font-weight: 600; }
+.price em { font-style: normal; font-size: 10.5px; color: var(--muted); }
+.btn-add { background: var(--surface-2); color: var(--fg); border: 1px solid var(--border); padding: 8px 14px; font-size: 12.5px; }
+.btn-add:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+.buy-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 40px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-m); padding: 20px; }
+.panel-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 12px; }
+.panel-h h3 { font-size: 16px; }
+.panel-h span { font-family: var(--font-num); font-size: 11px; color: var(--muted); }
+.cart-empty { color: var(--muted); font-size: 13.5px; padding: 26px 0; text-align: center; }
+.cart-row { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+.cart-row:last-of-type { border-bottom: 0; }
+.cart-n small { display: block; color: var(--muted); font-size: 11px; }
+.qty { display: flex; align-items: center; gap: 6px; }
+.qty button { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: var(--font-num); font-size: 13px; line-height: 1; color: var(--fg); }
+.qty button:hover { border-color: var(--fg); }
+.qty span { font-family: var(--font-num); font-size: 13px; min-width: 16px; text-align: center; }
+.cart-sum { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--fg); display: grid; gap: 6px; font-size: 13px; }
+.cart-sum div { display: flex; justify-content: space-between; }
+.cart-sum .tot b { font-family: var(--font-num); font-size: 19px; }
+.cart-hint { font-size: 11.5px; color: var(--muted); margin-top: 8px; }
+
+fieldset { border: 0; margin: 0; padding: 0; }
+.f-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field.full { grid-column: 1 / -1; }
+label { font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+input[type=text], input[type=tel], select, textarea {
+  font-family: var(--font-body); font-size: 14px; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--r-s); padding: 10px 12px; width: 100%;
+  transition: border-color .18s, box-shadow .18s; appearance: none;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--fg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fg) 8%, transparent); }
+input.err, select.err { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 62px; }
+.form-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
+.form-msg { font-size: 12.5px; color: var(--accent); min-height: 18px; }
+.ok-card { background: var(--surface); border: 1px solid var(--ok); border-radius: var(--r-m); padding: 22px; margin-top: 18px; display: none; }
+.ok-card.show { display: block; }
+.ok-card h4 { margin: 0 0 6px; font-family: var(--font-display); font-size: 18px; color: var(--ok); }
+.ok-card .oid { font-family: var(--font-num); font-size: 15px; letter-spacing: .04em; }
+.ok-card p { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.ok-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+.ord-grid { display: grid; grid-template-columns: .78fr 1.22fr; gap: 40px; align-items: start; }
+.ord-form { display: flex; gap: 10px; }
+.ord-list { display: grid; gap: 12px; }
+.ord-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-s); padding: 15px 16px; font-size: 13px; }
+.oi-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.oi-id { font-family: var(--font-num); font-size: 12.5px; }
+.oi-amt { font-family: var(--font-num); font-weight: 600; }
+.oi-meta { color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+.oi-items { margin-top: 6px; font-size: 12px; }
+.badge { display: inline-block; font-size: 10.5px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+.badge.wait { border-color: var(--accent); color: var(--accent); }
+.badge.ship { border-color: var(--fg); color: var(--fg); }
+.badge.done { border-color: var(--ok); color: var(--ok); }
+
+.tl { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 20px; }
+.tl::before { content: ""; position: absolute; top: 5px; left: 16.67%; right: 16.67%; height: 2px; background: var(--border); }
+.tl::after { content: ""; position: absolute; top: 5px; left: 16.67%; width: 0; height: 2px; background: var(--accent); transition: width .35s ease; }
+.tl[data-step="2"]::after { width: 33.33%; }
+.tl[data-step="3"]::after { width: 66.66%; }
+.tl-s { position: relative; padding-top: 22px; text-align: center; font-size: 11px; color: var(--muted); }
+.tl-s i { position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); z-index: 2; }
+.tl-s.on { color: var(--fg); }
+.tl-s.on i { background: var(--accent); border-color: var(--accent); }
+.tl-s em { display: block; font-style: normal; font-size: 10px; font-family: var(--font-num); opacity: .75; margin-top: 1px; }
+.oi-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); flex-wrap: wrap; }
+.oi-track { font-size: 11.5px; color: var(--muted); }
+.oi-track b { font-family: var(--font-num); color: var(--fg); font-weight: 600; }
+.empty { font-size: 13px; color: var(--muted); }
+.disc { font-size: 11.5px; color: var(--muted); margin-top: 14px; line-height: 1.6; }
+
+footer { border-top: 1px solid var(--border); padding: 34px 0 44px; margin-top: 40px; }
+.foot-in { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.foot-in a { border-bottom: 1px solid var(--border); }
+.foot-in a:hover { color: var(--fg); border-bottom-color: var(--fg); }
+
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: 13px; opacity: 0; pointer-events: none; transition: all .25s; z-index: 90; max-width: calc(100% - 40px); }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 920px) {
+  .hero-grid, .buy-grid, .ord-grid, .f-grid { grid-template-columns: 1fr; }
+  .hero-grid { gap: 32px; }
+  .strip-in { grid-template-columns: 1fr 1fr; }
+  .stat { padding: 18px; }
+  .stat:nth-child(3) { border-left: 0; padding-left: 18px; border-top: 1px solid var(--border); }
+  .stat:nth-child(4) { border-top: 1px solid var(--border); }
+  .stat:first-child { padding-left: 18px; }
+  .nav-links { display: none; }
+  section[data-section] { padding: 52px 0; }
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top"><b>糖研所</b><span>GUMMY&nbsp;LAB</span></a>
+    <nav class="nav-links">
+      <a href="#shop">选品</a>
+      <a href="#buy">下单</a>
+      <a href="#orders">我的订单</a>
+    </nav>
+    <button class="cart-btn" type="button" data-jump="buy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.5l2.2 11.2h11.6L21 7H6"/></svg>
+      购物袋 <span class="num" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+<section data-section="hero" class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">品牌软糖 · 精选 10 款</p>
+      <h1>十个品牌的软糖，<br>摆在同一张货架</h1>
+      <p class="lead">糖研所是一家只做软糖的小店。挑好下单，订单立刻生成；发货后能拿到快递单号，一路看着它从「待发货」变成「已完成」。</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#shop">开始挑软糖</a>
+        <a class="btn btn-ghost" href="#orders">我的订单</a>
+      </div>
+    </div>
+    <div class="hero-media">
+      <img src="assets/gummies.jpg" alt="彩色小熊软糖特写" width="1400" height="933">
+      <div class="hero-tag">
+        <div><div class="ht-k">下单后</div><div class="ht-v">48 小时内发出</div></div>
+        <div><div class="ht-k">满 ¥59</div><div class="ht-v">免运费</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <div class="wrap strip-in">
+    <div class="stat"><div class="stat-k">在售 SKU</div><div class="stat-v">10 款</div></div>
+    <div class="stat"><div class="stat-k">发货时效</div><div class="stat-v">48 小时内</div></div>
+    <div class="stat"><div class="stat-k">运费</div><div class="stat-v">满 59 免运费</div></div>
+    <div class="stat"><div class="stat-k">售后</div><div class="stat-v">7 天无理由</div></div>
+  </div>
+</div>
+
+<section data-section="shop" id="shop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">01 / 货架</p>
+        <h2>挑两袋喜欢的</h2>
+        <p>酸度、甜度、咀嚼度按试吃记录打的 5 分制主观分，帮你避开太酸或太硬的坑。加入购物袋后到下面结算。</p>
+      </div>
+      <div>
+        <div class="spectrum"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="spectrum-lbl"><span>偏酸</span><span>风味区间</span><span>偏甜</span></div>
+      </div>
+    </div>
+    <div class="grid">
+      <article class="card" data-sku="G01">
+        <div class="card-top"><span class="card-idx">G01</span><span class="card-cat">经典果味</span></div>
+        <div class="swatch" style="background:#C0392B"></div>
+        <h3 class="card-brand">哈瑞宝 HARIBO</h3>
+        <p class="card-name">金熊软糖 经典果味</p>
+        <p class="card-spec"><span class="num">200g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:40%;background:var(--accent);opacity:0.58"></i></span><span class="meter-v">2.0</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:86%;background:var(--fg);opacity:0.88"></i></span><span class="meter-v">4.3</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:68%;background:var(--fg);opacity:0.76"></i></span><span class="meter-v">3.4</span></div></div>
+        <p class="card-flavor">风味：草莓 / 覆盆子 / 橙 / 柠檬 / 菠萝</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥19.90</span><em>200g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G01">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G02">
+        <div class="card-top"><span class="card-idx">G02</span><span class="card-cat">酸味</span></div>
+        <div class="swatch" style="background:#E07B1F"></div>
+        <h3 class="card-brand">哈瑞宝 HARIBO</h3>
+        <p class="card-name">酸味彩虹条</p>
+        <p class="card-spec"><span class="num">175g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:92%;background:var(--accent);opacity:0.92"></i></span><span class="meter-v">4.6</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:76%;background:var(--fg);opacity:0.81"></i></span><span class="meter-v">3.8</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:84%;background:var(--fg);opacity:0.87"></i></span><span class="meter-v">4.2</span></div></div>
+        <p class="card-flavor">风味：青苹果 / 柠檬 / 樱桃</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥18.90</span><em>175g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G02">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G03">
+        <div class="card-top"><span class="card-idx">G03</span><span class="card-cat">水果</span></div>
+        <div class="swatch" style="background:#D9A227"></div>
+        <h3 class="card-brand">阿尔卑斯</h3>
+        <p class="card-name">果汁软糖 混合水果</p>
+        <p class="card-spec"><span class="num">100g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:48%;background:var(--accent);opacity:0.63"></i></span><span class="meter-v">2.4</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:92%;background:var(--fg);opacity:0.92"></i></span><span class="meter-v">4.6</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:52%;background:var(--fg);opacity:0.66"></i></span><span class="meter-v">2.6</span></div></div>
+        <p class="card-flavor">风味：葡萄 / 草莓 / 橙 / 苹果</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥11.90</span><em>100g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G03">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G04">
+        <div class="card-top"><span class="card-idx">G04</span><span class="card-cat">水果</span></div>
+        <div class="swatch" style="background:#7A4FB5"></div>
+        <h3 class="card-brand">旺仔</h3>
+        <p class="card-name">QQ糖 葡萄味</p>
+        <p class="card-spec"><span class="num">70g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:32%;background:var(--accent);opacity:0.53"></i></span><span class="meter-v">1.6</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:96%;background:var(--fg);opacity:0.94"></i></span><span class="meter-v">4.8</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:100%;background:var(--fg);opacity:0.97"></i></span><span class="meter-v">5.0</span></div></div>
+        <p class="card-flavor">风味：葡萄</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥7.50</span><em>70g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G04">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G05">
+        <div class="card-top"><span class="card-idx">G05</span><span class="card-cat">水果</span></div>
+        <div class="swatch" style="background:#6B3FA0"></div>
+        <h3 class="card-brand">明治 Meiji</h3>
+        <p class="card-name">果汁软糖 葡萄</p>
+        <p class="card-spec"><span class="num">60g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:56%;background:var(--accent);opacity:0.68"></i></span><span class="meter-v">2.8</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:82%;background:var(--fg);opacity:0.85"></i></span><span class="meter-v">4.1</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:60%;background:var(--fg);opacity:0.71"></i></span><span class="meter-v">3.0</span></div></div>
+        <p class="card-flavor">风味：葡萄 / 白桃</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥14.90</span><em>60g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G05">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G06">
+        <div class="card-top"><span class="card-idx">G06</span><span class="card-cat">趣味</span></div>
+        <div class="swatch" style="background:#3F7D4A"></div>
+        <h3 class="card-brand">Trolli</h3>
+        <p class="card-name">眼珠软糖</p>
+        <p class="card-spec"><span class="num">100g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:78%;background:var(--accent);opacity:0.83"></i></span><span class="meter-v">3.9</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:80%;background:var(--fg);opacity:0.84"></i></span><span class="meter-v">4.0</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:92%;background:var(--fg);opacity:0.92"></i></span><span class="meter-v">4.6</span></div></div>
+        <p class="card-flavor">风味：蓝莓 / 柠檬 / 混合果</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥16.90</span><em>100g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G06">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G07">
+        <div class="card-top"><span class="card-idx">G07</span><span class="card-cat">水果</span></div>
+        <div class="swatch" style="background:#8B4A8F"></div>
+        <h3 class="card-brand">悠哈 UHA</h3>
+        <p class="card-name">酷露露 葡萄</p>
+        <p class="card-spec"><span class="num">52g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:64%;background:var(--accent);opacity:0.74"></i></span><span class="meter-v">3.2</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:88%;background:var(--fg);opacity:0.89"></i></span><span class="meter-v">4.4</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:76%;background:var(--fg);opacity:0.81"></i></span><span class="meter-v">3.8</span></div></div>
+        <p class="card-flavor">风味：葡萄</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥13.50</span><em>52g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G07">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G08">
+        <div class="card-top"><span class="card-idx">G08</span><span class="card-cat">经典果味</span></div>
+        <div class="swatch" style="background:#2F7F5B"></div>
+        <h3 class="card-brand">二宝</h3>
+        <p class="card-name">果汁软糖 综合</p>
+        <p class="card-spec"><span class="num">200g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:44%;background:var(--accent);opacity:0.61"></i></span><span class="meter-v">2.2</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:90%;background:var(--fg);opacity:0.91"></i></span><span class="meter-v">4.5</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:64%;background:var(--fg);opacity:0.74"></i></span><span class="meter-v">3.2</span></div></div>
+        <p class="card-flavor">风味：橙 / 柠檬 / 覆盆子</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥16.90</span><em>200g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G08">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G09">
+        <div class="card-top"><span class="card-idx">G09</span><span class="card-cat">水果</span></div>
+        <div class="swatch" style="background:#C9522F"></div>
+        <h3 class="card-brand">徐福记</h3>
+        <p class="card-name">熊博士 果汁软糖</p>
+        <p class="card-spec"><span class="num">60g</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:52%;background:var(--accent);opacity:0.66"></i></span><span class="meter-v">2.6</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:94%;background:var(--fg);opacity:0.93"></i></span><span class="meter-v">4.7</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:72%;background:var(--fg);opacity:0.79"></i></span><span class="meter-v">3.6</span></div></div>
+        <p class="card-flavor">风味：草莓 / 橙 / 葡萄</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥8.90</span><em>60g / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G09">加入购物袋</button>
+        </div>
+      </article>
+      <article class="card" data-sku="G10">
+        <div class="card-top"><span class="card-idx">G10</span><span class="card-cat">礼盒</span></div>
+        <div class="swatch" style="background:#8E2B3A"></div>
+        <h3 class="card-brand">自营礼盒</h3>
+        <p class="card-name">混合尝鲜礼包 8 袋装</p>
+        <p class="card-spec"><span class="num">8袋装</span></p>
+        <div class="meters"><div class="meter"><span class="meter-l">酸度</span><span class="meter-t"><i style="width:52%;background:var(--accent);opacity:0.66"></i></span><span class="meter-v">2.6</span></div><div class="meter"><span class="meter-l">甜度</span><span class="meter-t"><i style="width:86%;background:var(--fg);opacity:0.88"></i></span><span class="meter-v">4.3</span></div><div class="meter"><span class="meter-l">咀嚼</span><span class="meter-t"><i style="width:72%;background:var(--fg);opacity:0.79"></i></span><span class="meter-v">3.6</span></div></div>
+        <p class="card-flavor">风味：8 种口味混装</p>
+        <div class="card-buy">
+          <div class="price"><span class="num">¥99.00</span><em>8袋装 / 袋</em></div>
+          <button class="btn btn-add" type="button" data-add="G10">加入购物袋</button>
+        </div>
+      </article></div>
+  </div>
+</section>
+
+<section data-section="buy" id="buy" style="background:var(--surface);border-block:1px solid var(--border)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">02 / 下单</p>
+        <h2>把购物袋结掉</h2>
+        <p>填好收件信息提交即可生成订单号。这是演示店铺，不会真实扣款；提交后可在「我的订单」里模拟发货。</p>
+      </div>
+    </div>
+
+    <div class="buy-grid">
+      <div class="panel" id="cart">
+        <div class="panel-h"><h3>购物袋</h3><span id="cartLine">0 件</span></div>
+        <div id="cartList"><p class="cart-empty">购物袋还是空的，先去上面挑两袋。</p></div>
+        <div class="cart-sum" id="cartSum" hidden>
+          <div><span>商品金额</span><span class="num" id="sumGoods">¥0.00</span></div>
+          <div><span>运费</span><span class="num" id="sumShip">¥0.00</span></div>
+          <div class="tot"><span>应付合计</span><b id="sumTotal">¥0.00</b></div>
+        </div>
+        <p class="cart-hint">运费规则：商品金额 ≥ ¥59 免运费，否则 ¥6。</p>
+      </div>
+
+      <div>
+        <form id="orderForm" novalidate>
+          <fieldset>
+            <div class="f-grid">
+              <div class="field"><label for="fName">收件人</label><input id="fName" name="customer" type="text" autocomplete="name" placeholder="真实姓名"></div>
+              <div class="field"><label for="fPhone">手机号</label><input id="fPhone" name="phone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="11 位手机号"></div>
+              <div class="field"><label for="fRegion">省 / 市</label><input id="fRegion" name="region" type="text" placeholder="浙江 / 杭州"></div>
+              <div class="field"><label for="fPay">支付方式</label>
+                <select id="fPay" name="pay_method">
+                  <option value="微信支付">微信支付</option>
+                  <option value="支付宝">支付宝</option>
+                  <option value="货到付款">货到付款</option>
+                </select>
+              </div>
+              <div class="field full"><label for="fAddr">详细地址</label><input id="fAddr" name="address" type="text" autocomplete="street-address" placeholder="街道、门牌号、楼层"></div>
+              <div class="field full"><label for="fNote">备注（口味偏好、送达时间）</label><textarea id="fNote" name="note" placeholder="例：不要榴莲味，工作日 18 点后送达"></textarea></div>
+            </div>
+            <div class="form-foot">
+              <p class="form-msg" id="formMsg"></p>
+              <button class="btn btn-primary" type="submit" id="submitBtn">提交订单 · <span class="num" id="btnTotal">¥0.00</span></button>
+            </div>
+          </fieldset>
+        </form>
+        <div class="ok-card" id="okCard">
+          <h4>下单成功</h4>
+          <p style="margin:0 0 8px;color:var(--fg)">订单号 <span class="oid num" id="okId">—</span></p>
+          <p id="okMeta">订单已生成，等待发货。</p>
+          <div class="ok-actions">
+            <button class="btn btn-primary btn-sm" type="button" id="okJump">查看订单并模拟发货</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-section="orders" id="orders">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">03 / 我的订单</p>
+        <h2>查订单 · 模拟发货</h2>
+        <p>用下单手机号查询订单。待发货的订单点「模拟发货」会生成快递单号，已发货的点「模拟签收」即完成。所有状态变更都会写进订单库。</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" type="button" id="exportBtn">导出全部订单 CSV</button>
+    </div>
+    <div class="ord-grid">
+      <div>
+        <label for="qPhone">下单手机号</label>
+        <div class="ord-form" style="margin-top:8px">
+          <input id="qPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="11 位手机号">
+          <button class="btn btn-primary" type="button" id="queryBtn">查询</button>
+        </div>
+        <p class="disc" id="qState">还没有查询记录。</p>
+        <p class="disc">没下过单？先在「下单」里提交一笔，再回来这里体验发货流程。</p>
+      </div>
+      <div class="ord-list" id="ordList"><p class="empty">查询后在这里显示订单与物流进度。</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>糖研所 GUMMY LAB · 软糖小店演示站点 · 下单与发货均为模拟，不涉及真实支付</div>
+    <div><a href="糖研所-商品与订单表.xlsx" download>商品清单 .xlsx</a> &nbsp;·&nbsp; <a href="#top">回到顶部</a></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+  var PRODUCTS = [{"sku": "G01", "brand": "哈瑞宝 HARIBO", "name": "金熊软糖 经典果味", "spec": "200g", "price": 19.9}, {"sku": "G02", "brand": "哈瑞宝 HARIBO", "name": "酸味彩虹条", "spec": "175g", "price": 18.9}, {"sku": "G03", "brand": "阿尔卑斯", "name": "果汁软糖 混合水果", "spec": "100g", "price": 11.9}, {"sku": "G04", "brand": "旺仔", "name": "QQ糖 葡萄味", "spec": "70g", "price": 7.5}, {"sku": "G05", "brand": "明治 Meiji", "name": "果汁软糖 葡萄", "spec": "60g", "price": 14.9}, {"sku": "G06", "brand": "Trolli", "name": "眼珠软糖", "spec": "100g", "price": 16.9}, {"sku": "G07", "brand": "悠哈 UHA", "name": "酷露露 葡萄", "spec": "52g", "price": 13.5}, {"sku": "G08", "brand": "二宝", "name": "果汁软糖 综合", "spec": "200g", "price": 16.9}, {"sku": "G09", "brand": "徐福记", "name": "熊博士 果汁软糖", "spec": "60g", "price": 8.9}, {"sku": "G10", "brand": "自营礼盒", "name": "混合尝鲜礼包 8 袋装", "spec": "8袋装", "price": 99.0}];
+  var SHIP_FEE = 6, FREE_AT = 59;
+  var STEPS = ["待发货", "已发货", "已完成"];
+  var CARRIERS = [
+    { name: "顺丰速运", code: "SF" },
+    { name: "中通快递", code: "ZT" },
+    { name: "圆通速递", code: "YT" }
+  ];
+  var cart = {};
+
+  function $(id) { return document.getElementById(id); }
+  function fmt(n) { return "¥" + Number(n).toFixed(2); }
+  function find(sku) {
+    for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i].sku === sku) return PRODUCTS[i];
+    return null;
+  }
+  function pad(n, w) { var s = String(n); while (s.length < w) s = "0" + s; return s; }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("on");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("on"); }, 2100);
+  }
+
+  /* ---------- 存储：有服务端写文件，纯静态存本地 ---------- */
+  var LS_KEY = "gummy_lab_orders_v2";
+  function lsRead() {
+    try {
+      var raw = window.localStorage ? window.localStorage.getItem(LS_KEY) : null;
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function lsWrite(list) {
+    try { if (window.localStorage) window.localStorage.setItem(LS_KEY, JSON.stringify(list)); }
+    catch (e) { /* 存储不可用时仅保留在内存 */ }
+  }
+  function hasServer() { return location.protocol === "http:" || location.protocol === "https:"; }
+
+  function api(url, opts) {
+    opts = opts || {};
+    return fetch(url, opts).then(function (r) {
+      if (!r.ok) throw new Error("http " + r.status);
+      return r.json();
+    });
+  }
+
+  function saveOrder(order) {
+    if (hasServer()) {
+      return api("api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order)
+      }).then(function (d) {
+        return { stored: "server", order: d.order || order };
+      }).catch(function () {
+        var list = lsRead(); list.unshift(order); lsWrite(list);
+        return { stored: "local", order: order };
+      });
+    }
+    var list = lsRead(); list.unshift(order); lsWrite(list);
+    return Promise.resolve({ stored: "local", order: order });
+  }
+
+  function localQuery(phone) {
+    var list = lsRead();
+    if (!phone) return list;
+    return list.filter(function (o) { return o.phone === phone; });
+  }
+
+  function loadOrders(phone) {
+    if (hasServer()) {
+      return api("api/orders?phone=" + encodeURIComponent(phone || ""))
+        .then(function (d) { return d.orders || []; })
+        .catch(function () { return localQuery(phone); });
+    }
+    return Promise.resolve(localQuery(phone));
+  }
+
+  function advanceOrder(order, action) {
+    if (hasServer()) {
+      return api("api/orders/" + encodeURIComponent(order.order_id) + "/advance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: action })
+      }).then(function (d) { return d.order; })
+        .catch(function () { return advanceLocal(order, action); });
+    }
+    return Promise.resolve(advanceLocal(order, action));
+  }
+
+  function advanceLocal(order, action) {
+    var list = lsRead();
+    var target = null;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].order_id === order.order_id) { target = list[i]; break; }
+    }
+    if (!target) { target = order; list.unshift(target); }
+    applyAdvance(target, action);
+    lsWrite(list);
+    return target;
+  }
+
+  function applyAdvance(o, action) {
+    var now = new Date().toISOString();
+    if (action === "ship" && o.status === "待发货") {
+      var c = CARRIERS[Math.floor(Math.random() * CARRIERS.length)];
+      o.carrier = c.name;
+      o.tracking_no = c.code + pad(Math.floor(Math.random() * 1e10), 10);
+      o.status = "已发货";
+      o.shipped_at = now;
+      o.eta = new Date(Date.now() + 2 * 864e5).toISOString().slice(0, 10);
+    } else if (action === "complete" && o.status === "已发货") {
+      o.status = "已完成";
+      o.completed_at = now;
+    }
+    return o;
+  }
+
+  /* ---------- 购物袋 ---------- */
+  function recalc() {
+    var goods = 0, count = 0;
+    Object.keys(cart).forEach(function (sku) {
+      goods += find(sku).price * cart[sku];
+      count += cart[sku];
+    });
+    var ship = (goods > 0 && goods < FREE_AT) ? SHIP_FEE : 0;
+    var total = goods + ship;
+    $("cartCount").textContent = count;
+    $("cartLine").textContent = count + " 件";
+    $("sumGoods").textContent = fmt(goods);
+    $("sumShip").textContent = ship ? fmt(ship) : "免运费";
+    $("sumTotal").textContent = fmt(total);
+    $("btnTotal").textContent = fmt(total);
+    $("cartSum").hidden = count === 0;
+    return { goods: goods, ship: ship, total: total, count: count };
+  }
+
+  function renderCart() {
+    var box = $("cartList");
+    var skus = Object.keys(cart);
+    if (!skus.length) {
+      box.innerHTML = '<p class="cart-empty">购物袋还是空的，先去上面挑两袋。</p>';
+      recalc();
+      return;
+    }
+    box.innerHTML = skus.map(function (sku) {
+      var p = find(sku);
+      return '<div class="cart-row">' +
+        '<div class="cart-n">' + p.brand + ' · ' + p.name + '<small>' + p.spec + ' · ' + fmt(p.price) + '</small></div>' +
+        '<div class="qty"><button type="button" data-dec="' + sku + '" aria-label="减少">−</button><span>' + cart[sku] + '</span><button type="button" data-inc="' + sku + '" aria-label="增加">+</button></div>' +
+        '<div class="num">' + fmt(p.price * cart[sku]) + '</div>' +
+        '</div>';
+    }).join("");
+    recalc();
+  }
+
+  document.addEventListener("click", function (e) {
+    var add = e.target.closest("[data-add]");
+    if (add) {
+      var sku = add.getAttribute("data-add");
+      cart[sku] = (cart[sku] || 0) + 1;
+      renderCart();
+      toast("已加入购物袋：" + find(sku).name);
+      return;
+    }
+    var inc = e.target.closest("[data-inc]");
+    if (inc) {
+      var s1 = inc.getAttribute("data-inc");
+      cart[s1] = Math.min((cart[s1] || 0) + 1, 20);
+      renderCart();
+      return;
+    }
+    var dec = e.target.closest("[data-dec]");
+    if (dec) {
+      var s2 = dec.getAttribute("data-dec");
+      cart[s2] = (cart[s2] || 0) - 1;
+      if (cart[s2] <= 0) delete cart[s2];
+      renderCart();
+      return;
+    }
+    var jump = e.target.closest("[data-jump]");
+    if (jump) {
+      var el = document.getElementById(jump.getAttribute("data-jump"));
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    var act = e.target.closest("[data-act]");
+    if (act) {
+      var oid = act.getAttribute("data-act");
+      var action = act.getAttribute("data-do");
+      act.disabled = true;
+      var order = null;
+      for (var i = 0; i < lastOrders.length; i++) {
+        if (lastOrders[i].order_id === oid) { order = lastOrders[i]; break; }
+      }
+      if (!order) return;
+      advanceOrder(order, action).then(function (updated) {
+        toast(action === "ship" ? "已发货，单号 " + (updated.tracking_no || "") : "已签收，订单完成");
+        return queryByPhone($("qPhone").value.trim());
+      }).finally(function () { act.disabled = false; });
+    }
+  });
+
+  /* ---------- 提交订单 ---------- */
+  function newOrderId() {
+    var d = new Date();
+    return "GM" + d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2) +
+      pad(Math.floor(Math.random() * 9000) + 1000, 4);
+  }
+
+  $("orderForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = $("formMsg");
+    var name = $("fName"), phone = $("fPhone"), region = $("fRegion"), addr = $("fAddr");
+    [name, phone, region, addr].forEach(function (i) { i.classList.remove("err"); });
+    msg.textContent = "";
+
+    var sum = recalc();
+    if (!sum.count) { msg.textContent = "购物袋是空的，先挑几袋软糖吧。"; return; }
+    if (!name.value.trim()) { name.classList.add("err"); msg.textContent = "请填写收件人姓名。"; name.focus(); return; }
+    if (!/^1[3-9]\d{9}$/.test(phone.value.trim())) { phone.classList.add("err"); msg.textContent = "手机号格式不正确，需要 11 位大陆手机号。"; phone.focus(); return; }
+    if (!region.value.trim()) { region.classList.add("err"); msg.textContent = "请填写省 / 市，用于估算配送时效。"; region.focus(); return; }
+    if (addr.value.trim().length < 6) { addr.classList.add("err"); msg.textContent = "详细地址太短，请补齐街道与门牌号。"; addr.focus(); return; }
+
+    var items = Object.keys(cart).map(function (sku) {
+      var p = find(sku);
+      return { sku: sku, name: p.brand + " " + p.name, spec: p.spec, price: p.price, qty: cart[sku] };
+    });
+    var order = {
+      order_id: newOrderId(),
+      created_at: new Date().toISOString(),
+      customer: name.value.trim(),
+      phone: phone.value.trim(),
+      region: region.value.trim(),
+      address: addr.value.trim(),
+      items: items,
+      goods_amount: Number(sum.goods.toFixed(2)),
+      shipping_fee: Number(sum.ship.toFixed(2)),
+      total: Number(sum.total.toFixed(2)),
+      pay_method: $("fPay").value,
+      status: "待发货",
+      note: $("fNote").value.trim(),
+      carrier: "",
+      tracking_no: "",
+      shipped_at: "",
+      completed_at: ""
+    };
+
+    var btn = $("submitBtn");
+    btn.disabled = true;
+    saveOrder(order).then(function (res) {
+      var o = res.order || order;
+      lastPhone = o.phone;
+      $("okId").textContent = o.order_id;
+      $("okMeta").textContent = "实付 " + fmt(o.total) + " · " + o.pay_method + " · " +
+        (res.stored === "server" ? "已写入订单库" : "已保存到本机浏览器") + "，当前状态「待发货」。";
+      $("okCard").classList.add("show");
+      $("okCard").scrollIntoView({ behavior: "smooth", block: "center" });
+      cart = {};
+      renderCart();
+      $("orderForm").reset();
+      toast("下单成功 " + o.order_id);
+    }).finally(function () { btn.disabled = false; });
+  });
+
+  var lastPhone = "";
+  $("okJump").addEventListener("click", function () {
+    $("qPhone").value = lastPhone;
+    var el = document.getElementById("orders");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    queryByPhone(lastPhone);
+  });
+
+  /* ---------- 订单列表 ---------- */
+  var lastOrders = [];
+
+  function stepOf(status) {
+    var i = STEPS.indexOf(status);
+    return i < 0 ? 1 : i + 1;
+  }
+  function badgeCls(status) {
+    return status === "待发货" ? "badge wait" : (status === "已发货" ? "badge ship" : "badge done");
+  }
+  function shortTime(iso) {
+    if (!iso) return "—";
+    return String(iso).replace("T", " ").slice(5, 16);
+  }
+
+  function renderOrders(list) {
+    var box = $("ordList");
+    if (!list.length) {
+      box.innerHTML = '<p class="empty">没有找到订单。换个手机号试试，或先在「下单」里提交一笔。</p>';
+      return;
+    }
+    box.innerHTML = list.map(function (o) {
+      var step = stepOf(o.status);
+      var items = (o.items || []).map(function (it) {
+        return it.name + " <span class=\"num\">×" + it.qty + "</span>";
+      }).join("　");
+      var track = o.tracking_no
+        ? '快递：<b>' + o.carrier + " " + o.tracking_no + "</b>" + (o.eta ? "　预计 " + o.eta + " 送达" : "")
+        : "尚未发货";
+      var btn = "";
+      if (o.status === "待发货") {
+        btn = '<button class="btn btn-ship btn-sm" type="button" data-act="' + o.order_id + '" data-do="ship">模拟发货</button>';
+      } else if (o.status === "已发货") {
+        btn = '<button class="btn btn-ship btn-sm" type="button" data-act="' + o.order_id + '" data-do="complete">模拟签收</button>';
+      } else {
+        btn = '<span class="badge done">已签收</span>';
+      }
+      return '<div class="ord-item">' +
+        '<div class="oi-top"><span class="oi-id">' + o.order_id + '</span><span class="oi-amt num">' + fmt(o.total) + '</span></div>' +
+        '<div class="oi-meta">' + shortTime(o.created_at) + ' · ' + o.customer + ' · ' + o.phone + ' · ' + o.region +
+          '<span class="' + badgeCls(o.status) + '">' + o.status + '</span></div>' +
+        '<div class="oi-items">' + items + '</div>' +
+        '<div class="tl" data-step="' + step + '">' +
+          '<div class="tl-s ' + (step >= 1 ? "on" : "") + '"><i></i>已下单<em>' + shortTime(o.created_at) + '</em></div>' +
+          '<div class="tl-s ' + (step >= 2 ? "on" : "") + '"><i></i>已发货<em>' + shortTime(o.shipped_at) + '</em></div>' +
+          '<div class="tl-s ' + (step >= 3 ? "on" : "") + '"><i></i>已完成<em>' + shortTime(o.completed_at) + '</em></div>' +
+        '</div>' +
+        '<div class="oi-foot"><span class="oi-track">' + track + '</span>' + btn + '</div>' +
+        '</div>';
+    }).join("");
+  }
+
+  function queryByPhone(p) {
+    return loadOrders(p).then(function (list) {
+      lastOrders = list;
+      $("qState").textContent = list.length
+        ? "手机号 " + p + " 名下共 " + list.length + " 笔订单。"
+        : "手机号 " + p + " 下暂无订单。";
+      renderOrders(list);
+      return list;
+    });
+  }
+
+  $("queryBtn").addEventListener("click", function () {
+    var p = $("qPhone").value.trim();
+    if (!/^1[3-9]\d{9}$/.test(p)) { $("qState").textContent = "请输入 11 位下单手机号。"; return; }
+    queryByPhone(p);
+  });
+  $("qPhone").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); $("queryBtn").click(); }
+  });
+
+  /* ---------- 导出 ---------- */
+  function csvCell(v) {
+    var s = v === null || v === undefined ? "" : String(v);
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  $("exportBtn").addEventListener("click", function () {
+    loadOrders("").then(function (list) {
+      if (!list.length) { toast("还没有可导出的订单"); return; }
+      var head = ["order_id", "created_at", "customer", "phone", "region", "address", "items",
+                  "goods_amount", "shipping_fee", "total", "pay_method", "status",
+                  "carrier", "tracking_no", "shipped_at", "completed_at", "note"];
+      var rows = [head.map(csvCell).join(",")];
+      list.forEach(function (o) {
+        var items = (o.items || []).map(function (it) { return it.name + " x" + it.qty; }).join(" | ");
+        rows.push([o.order_id, o.created_at, o.customer, o.phone, o.region, o.address, items,
+                   o.goods_amount, o.shipping_fee, o.total, o.pay_method, o.status,
+                   o.carrier, o.tracking_no, o.shipped_at, o.completed_at, o.note].map(csvCell).join(","));
+      });
+      var blob = new Blob(["\ufeff" + rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "gummy-orders-" + new Date().toISOString().slice(0, 10) + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 1200);
+      toast("已导出 " + list.length + " 笔订单");
+    });
+  });
+
+  renderCart();
+})();
+</script>
+</body>
+</html>
